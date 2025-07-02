@@ -8,14 +8,14 @@ pipeline {
         pollSCM '* * * * *'
     }
     stages {
-        stage('Checkout SCM') {
+        /* stage('Checkout SCM') {
             steps {
                 // When using a 'docker' agent, Jenkins automatically checks out the SCM
                 // into the container's workspace. No explicit 'git' step needed here unless
                 // you have multiple repositories or complex checkout requirements.
                 checkout scm
             }
-        }
+        } */
         stage('Build') {
             steps {
                 echo "Building for Production.."
