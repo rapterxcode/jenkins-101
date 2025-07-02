@@ -8,11 +8,18 @@ pipeline {
         pollSCM '* * * * *'
     }
     stages {
+        stage('Checkout SCM') {
+            steps {
+                // Explicitly define the Git repository and the branch to clone
+                // *** IMPORTANT: Replace 'main' with your actual branch name if it's different ***
+                git branch: 'main', url: 'https://github.com/devopsjourney1/jenkins-101.git'
+            }
+        }
         stage('Build') {
             steps {
                 echo "Building.."
                 sh '''
-                    cd Learn-Jenkins_CI_CD/myapp
+                    cd myapp
                     # Create a Python virtual environment if it doesn't exist
                     python3 -m venv venv || true
                     # Activate the virtual environment
@@ -26,7 +33,7 @@ pipeline {
             steps {
                 echo "Testing.."
                 sh '''
-                    cd Learn-Jenkins_CI_CD/myapp
+                    cd myapp
                     # Activate the virtual environment for testing
                     source venv/bin/activate
                     # Run your Python scripts using the Python from the virtual environment
@@ -41,7 +48,7 @@ pipeline {
                 sh '''
                     echo "doing delivery stuff.."
                     # If your delivery steps require Python packages, activate the venv here too
-                    # cd Learn-Jenkins_CI_CD/myapp
+                    # cd myapp
                     # source venv/bin/activate
                     # python your_delivery_script.py
                 '''
