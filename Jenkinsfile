@@ -8,12 +8,6 @@ pipeline {
         pollSCM '* * * * *'
     }
     stages {
-        // It's good practice to explicitly check out your SCM
-        stage('Checkout SCM') {
-            steps {
-                checkout scm
-            }
-        }
         stage('Build') {
             steps {
                 echo "Building.."
