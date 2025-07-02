@@ -8,21 +8,19 @@ pipeline {
         pollSCM '* * * * *'
     }
     stages {
-        stage('Checkout SCM') {
+        /* stage('Checkout SCM') {
             steps {
                 // Explicitly define the Git repository and the branch to clone
                 // *** IMPORTANT: Replace 'main' with your actual branch name if it's different ***
                 git branch: 'main', url: 'https://github.com/devopsjourney1/jenkins-101.git'
             }
-        }
+        } */
         stage('Build') {
             steps {
                 echo "Building.."
                 sh '''
                     cd myapp
-                    # WARNING: Using --break-system-packages can lead to system instability.
-                    # It is generally NOT recommended for production environments.
-                    pip install -r requirements.txt --break-system-packages
+                    pip install -r requirements.txt
                 '''
             }
         }
