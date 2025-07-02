@@ -20,12 +20,9 @@ pipeline {
                 echo "Building.."
                 sh '''
                     cd myapp
-                    # Create a Python virtual environment if it doesn't exist
-                    python3 -m venv venv || true
-                    # Activate the virtual environment
-                    source venv/bin/activate
-                    # Install dependencies into the virtual environment
-                    pip install -r requirements.txt
+                    # WARNING: Using --break-system-packages can lead to system instability.
+                    # It is generally NOT recommended for production environments.
+                    pip install -r requirements.txt --break-system-packages
                 '''
             }
         }
@@ -34,11 +31,9 @@ pipeline {
                 echo "Testing.."
                 sh '''
                     cd myapp
-                    # Activate the virtual environment for testing
-                    source venv/bin/activate
-                    # Run your Python scripts using the Python from the virtual environment
-                    python hello.py
-                    python hello.py --name=phonerapterx
+                    # Run your Python scripts directly
+                    python3 hello.py
+                    python3 hello.py --name=phonerapterx
                 '''
             }
         }
@@ -47,10 +42,6 @@ pipeline {
                 echo 'Deliver....'
                 sh '''
                     echo "doing delivery stuff.."
-                    # If your delivery steps require Python packages, activate the venv here too
-                    # cd myapp
-                    # source venv/bin/activate
-                    # python your_delivery_script.py
                 '''
             }
         }
