@@ -21,23 +21,23 @@ A comprehensive Jenkins CI/CD learning project demonstrating containerized Jenki
 
 2. **Build Jenkins Master**
    ```bash
-   docker build -t jenkins-master ./Jenkins_Install
+   docker build -t myjenkins-blueocean:2.504.3-1 ./Jenkins_Install
    ```
 
 3. **Build Jenkins Agent**
    ```bash
-   docker build -t jenkins-python-agent ./Jenkins_agent
+   docker build -t phonepasit9/myjenkinsagents:python ./Jenkins_agent
    ```
 
 4. **Run Jenkins Master**
    ```bash
-   docker run -d \
-     --name jenkins-master \
-     -p 8080:8080 \
-     -p 50000:50000 \
-     -v jenkins_home:/var/jenkins_home \
-     -v /var/run/docker.sock:/var/run/docker.sock \
-     jenkins-master
+   docker run --name jenkins-blueocean --restart=on-failure --detach \
+      --network jenkins --env DOCKER_HOST=tcp://docker:2376 \
+      --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 \
+      --publish 8080:8080 --publish 50000:50000 \
+      --volume jenkins-data:/var/jenkins_home \
+      --volume jenkins-docker-certs:/certs/client:ro \
+      myjenkins-blueocean:2.504.3-1
    ```
 
 5. **Access Jenkins**
@@ -54,18 +54,22 @@ A comprehensive Jenkins CI/CD learning project demonstrating containerized Jenki
    - Click "New Node"
    - Name: `docker-agent-python`
    - Select "Permanent Agent"
-
+   ```bash
+   docker run -d --restart=always -p 127.0.0.1:2376:2375 --network jenkins -v /var/run/docker.sock:/var/run/docker.sock alpine/socat tcp-listen:2375,fork,reuseaddr unix-connect:/var/run/docker.sock
+   
+   docker inspect <container_id> | grep IPAddress
+   ```
 2. **Configure Agent:**
-   - Remote root directory: `/home/jenkins/agent`
+   - Remote root directory: `/home/jenkins`
    - Labels: `docker-agent-python`
    - Launch method: "Launch agent by connecting it to the master"
 
 3. **Run Agent Container:**
    ```bash
    docker run -d \
-     --name jenkins-python-agent \
-     -v jenkins_agent_workspace:/home/jenkins/agent \
-     jenkins-python-agent \
+     --name docker-agent-python \
+     -v jenkins_agent_workspace:/home/jenkins \
+     phonepasit9/myjenkinsagents:python \
      java -jar agent.jar -jnlpUrl http://HOST_IP:8080/computer/docker-agent-python/slave-agent.jnlp -secret SECRET_KEY
    ```
 
